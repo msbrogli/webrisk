@@ -5,15 +5,27 @@ class RiskGame extends Backbone.Model
 			 'players': new buckets.Set
 
 
-class RiskGameView extends Backbone.View
+class Country extends Backbone.Model
+
+
+class CountryView extends Backbone.View
 	render: ->
-		$(@el).html 'Teste'
+		alert 'ae'
 
 
-class RiskGameController extends Backbone.Controller
-	initialize: (el) ->
+class RiskGameView extends Backbone.View
+	initialize: ->
+		$(@el).append $('<img src="images/map.jpg">').css('width', '100%')
+
+	render: ->
+		return @
+
+
+class RiskGameController
+	constructor: (el) ->
 		model = new RiskGame
 		view = new RiskGameView 'el': el, 'model': model
+		view.render()
 
 
 init = ->
