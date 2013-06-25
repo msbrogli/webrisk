@@ -41,8 +41,7 @@ class RiskGame extends Backbone.Model
 		# http://en.wikipedia.org/wiki/Risk_(game)#Setup
 		lands = @.get 'lands'
 		players = @.get 'players'
-		v = [0 .. lands.length-1]
-		shuffle v
+		v = _.shuffle [0 .. lands.length-1]
 		_.each v, (idxLand, idx) ->
 			lands.at(idxLand).set 'player': players.at(idx % players.length)
 
