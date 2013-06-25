@@ -3,6 +3,14 @@ class Player extends Backbone.Model
 	defaults:
 		name: ''
 
+	distributeArmies: (numberOfArmies, lands) ->
+		# Distribute armies evenly.
+		_.each lands, (land, idx) ->
+			qty = Math.floor(numberOfArmies / lands.length)
+			if idx < numberOfArmies % lands.length
+				qty++
+			land.set 'armies': qty
+
 	play: ->
 		name = @.get 'name'
 		console.log name + ' is playing'
@@ -19,7 +27,18 @@ class RiskGame extends Backbone.Model
 		players: new PlayerCollection
 		currentPlayerIndex: 0
 
+	distributeArmies: ->
+		# TODO Check if players are distributing correctly (neither more nor less and at least one per land)
+		numberOfArmies = 40
+		@.get('players').each ((player) ->
+			lands = @.get('lands').filter (land) -> land.get('player') == player
+			player.distributeArmies numberOfArmies, lands
+		), @
+
 	distributeLands: ->
+		# Distribute according to the original French rules.
+		# Another choice is players choosing a land one after the other.
+		# http://en.wikipedia.org/wiki/Risk_(game)#Setup
 		lands = @.get 'lands'
 		players = @.get 'players'
 		v = [0 .. lands.length-1]
@@ -29,6 +48,7 @@ class RiskGame extends Backbone.Model
 
 	setup: ->
 		@.distributeLands()
+		@.distributeArmies()
 
 	next: ->
 		idx = @.get 'currentPlayerIndex'
