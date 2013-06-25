@@ -16,6 +16,36 @@ class PlayerCollection extends Backbone.Collection
 class RiskGame extends Backbone.Model
 	defaults: ->
 		lands: new LandCollection
+		players: new PlayerCollection
+		currentPlayerIndex: 0
+
+	distributeLands: ->
+		lands = @.get 'lands'
+		players = @.get 'players'
+		v = [0 .. lands.length-1]
+		shuffle v
+		_.each v, (idxLand, idx) ->
+			lands.at(idxLand).set 'player': players.at(idx % players.length)
+
+	setup: ->
+		@.distributeLands()
+
+	next: ->
+		idx = @.get 'currentPlayerIndex'
+		players = @.get 'players'
+		idx = (idx+1) % players.length
+		@.set 'currentPlayerIndex': idx
+
+	step: ->
+		players = @.get 'players'
+		idx = @.get 'currentPlayerIndex'
+		player = players.at idx
+		ret = player.play()
+		if ret.cmd == 'done'
+			@next()
+		else
+			console.log 'invalid return, ignoring'
+			@next()
 
 
 class Land extends Backbone.Model
@@ -70,35 +100,11 @@ class RiskGameView extends Backbone.View
 
 class RiskGameController
 	constructor: (el) ->
-		@currentPlayerIndex = 0
 		@lands = new LandCollection
 		@players = new PlayerCollection
-		@game = new RiskGame 'lands': @lands
+		@game = new RiskGame 'lands': @lands, 'players': @players
 		@view = new RiskGameView 'el': el, 'model': @game
 		@view.render()
-
-	distributeLands: ->
-		lands = @lands
-		players = @players
-		v = [0 .. lands.length-1]
-		shuffle v
-		_.each v, (idxLand, idx) ->
-			lands.at(idxLand).set 'player': players.at(idx % players.length)
-
-	step: ->
-		player = @players.at @currentPlayerIndex
-		ret = player.play()
-		if ret.cmd == 'done'
-			@next()
-		else
-			console.log 'invalid return, ignoring'
-			@next()
-
-	next: ->
-		@currentPlayerIndex++
-		@currentPlayerIndex %= @players.length
-
-	run: ->
 
 
 init = ->
@@ -111,11 +117,10 @@ init = ->
 		name: 'patty'
 
 	afterLoadResources = ->
-		controller.distributeLands()
-		controller.step()
-		controller.step()
-		controller.step()
-		controller.step()
+		controller.game.setup()
+		controller.game.step()
+		controller.game.step()
+		controller.game.step()
 
 	setTimeout afterLoadResources, 1000
 
