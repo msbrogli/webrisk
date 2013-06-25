@@ -54,7 +54,7 @@ class Land extends Backbone.Model
 		player: null
 		top: 0
 		left: 0
-		tokens: 0
+		armies: 0
 
 
 class LandCollection extends Backbone.Collection
@@ -71,11 +71,11 @@ class LandView extends Backbone.View
 		@.listenTo @model, 'change', @render
 
 	render: ->
-		tokens = @model.get 'tokens'
+		armies = @model.get 'armies'
 		player = @model.get 'player'
 		if player
 			player = player.get 'name'
-		$(@el).html(tokens + player)
+		$(@el).html(armies + player)
 
 
 class RiskGameView extends Backbone.View
