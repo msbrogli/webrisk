@@ -1,4 +1,8 @@
 [
 	{ "name": "Brazil", "top": "640px", "left": "300px" },
+	{ "name": "Argentina", "top": "720px", "left": "250px" },
+	{ "name": "Bolivia", "top": "640px", "left": "200px" },
+	{ "name": "Venezuela", "top": "540px", "left": "250px" },
+
 	{ "name": "Ottawa", "top": "325px", "left": "240px" }
 ]

@@ -1,4 +1,14 @@
 
+class Player extends Backbone.Model
+	defaults:
+		name: ''
+		play: (-> 'cmd': 'done')
+
+
+class PlayerCollection extends Backbone.Collection
+	model: Player
+
+
 class RiskGame extends Backbone.Model
 	defaults: ->
 		lands: new LandCollection
@@ -7,6 +17,7 @@ class RiskGame extends Backbone.Model
 class Land extends Backbone.Model
 	defaults: ->
 		name: ''
+		player: null
 		top: 0
 		left: 0
 		tokens: 0
@@ -26,7 +37,11 @@ class LandView extends Backbone.View
 		@.listenTo @model, 'change', @render
 
 	render: ->
-		$(@el).html(@model.get 'tokens')
+		tokens = @model.get 'tokens'
+		player = @model.get 'player'
+		if player
+			player = player.get 'name'
+		$(@el).html(tokens + player)
 
 
 class RiskGameView extends Backbone.View
@@ -51,15 +66,39 @@ class RiskGameView extends Backbone.View
 
 class RiskGameController
 	constructor: (el) ->
+		@currentPlayerIndex = 0
 		@lands = new LandCollection
+		@players = new PlayerCollection
 		@game = new RiskGame 'lands': @lands
 		@view = new RiskGameView 'el': el, 'model': @game
 		@view.render()
+
+	distributeLands: ->
+		lands = @lands
+		players = @players
+		v = [0 .. lands.length-1]
+		shuffle v
+		_.each v, (idxLand, idx) ->
+			lands.at(idxLand).set 'player': players.at(idx % players.length)
+
+	next: ->
+	run: ->
 
 
 init = ->
 	controller = new RiskGameController $('#risk')
 	controller.lands.fetch url: 'lands.json'
+
+	controller.players.add
+		name: 'msbrogli'
+	controller.players.add
+		name: 'patty'
+
+	afterLoadResources = ->
+		controller.distributeLands()
+		controller.next()
+
+	setTimeout afterLoadResources, 1000
 
 
 $(document).ready init
