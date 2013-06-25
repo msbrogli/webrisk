@@ -31,12 +31,17 @@ class LandView extends Backbone.View
 
 class RiskGameView extends Backbone.View
 	initialize: ->
-		@landviews = landviews = []
-		parent = @el
+		@landviews = []
+
 		lands = @model.get 'lands'
-		lands.each (land) ->
-			landviews.push(new LandView 'parent': parent, 'model': land)
+		@.listenTo(lands, 'add', @addLand)
+
 		$(@el).append $('<img src="images/map.jpg">').css('width', '100%')
+
+	addLand: (land, collection) ->
+		view = new LandView 'parent': @el, 'model': land
+		@landviews.push view
+		view.render()
 
 	render: ->
 		_.each @landviews, (view) ->
@@ -46,15 +51,13 @@ class RiskGameView extends Backbone.View
 
 class RiskGameController
 	constructor: (el) ->
-		lands = new LandCollection [
-			(name: 'Brazil', top: '640px', left: '300px')
-			(name: 'Ottawa', top: '325px', left: '240px')
-		]
+		lands = new LandCollection
 		model = new RiskGame 'lands': lands
 		view = new RiskGameView 'el': el, 'model': model
 		view.render()
 
-		lands.models[0].set 'tokens', 4
+		lands.fetch url: 'lands.json'
+		$.lands = lands
 
 
 init = ->
