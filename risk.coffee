@@ -47,8 +47,8 @@ class RiskGameView extends Backbone.View
 class RiskGameController
 	constructor: (el) ->
 		lands = new LandCollection [
-			(top: '640px', left: '300px')
-			(top: '325px', left: '240px')
+			(name: 'Brazil', top: '640px', left: '300px')
+			(name: 'Ottawa', top: '325px', left: '240px')
 		]
 		model = new RiskGame 'lands': lands
 		view = new RiskGameView 'el': el, 'model': model
