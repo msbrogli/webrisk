@@ -4,5 +4,6 @@
 	{ "name": "Bolivia", "top": "640px", "left": "200px" },
 	{ "name": "Venezuela", "top": "540px", "left": "250px" },
 
-	{ "name": "Ottawa", "top": "325px", "left": "240px" }
+	{ "name": "Ottawa", "top": "325px", "left": "240px" },
+	{ "name": "Congo", "top": "640px", "left": "670px" }
 ]
