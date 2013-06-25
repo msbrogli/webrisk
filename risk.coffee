@@ -2,7 +2,11 @@
 class Player extends Backbone.Model
 	defaults:
 		name: ''
-		play: (-> 'cmd': 'done')
+
+	play: ->
+		name = @.get 'name'
+		console.log name + ' is playing'
+		'cmd': 'done'
 
 
 class PlayerCollection extends Backbone.Collection
@@ -81,7 +85,19 @@ class RiskGameController
 		_.each v, (idxLand, idx) ->
 			lands.at(idxLand).set 'player': players.at(idx % players.length)
 
+	step: ->
+		player = @players.at @currentPlayerIndex
+		ret = player.play()
+		if ret.cmd == 'done'
+			@next()
+		else
+			console.log 'invalid return, ignoring'
+			@next()
+
 	next: ->
+		@currentPlayerIndex++
+		@currentPlayerIndex %= @players.length
+
 	run: ->
 
 
@@ -96,7 +112,10 @@ init = ->
 
 	afterLoadResources = ->
 		controller.distributeLands()
-		controller.next()
+		controller.step()
+		controller.step()
+		controller.step()
+		controller.step()
 
 	setTimeout afterLoadResources, 1000
 
