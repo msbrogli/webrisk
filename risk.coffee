@@ -127,21 +127,20 @@ class RiskGameController
 
 
 init = ->
-	controller = new RiskGameController $('#risk')
-	controller.lands.fetch url: 'lands.json'
-
-	controller.players.add
-		name: 'msbrogli'
-	controller.players.add
-		name: 'patty'
-
-	afterLoadResources = ->
+	numberOfResourcesToLoad = 1
+	afterLoadResources = _.after numberOfResourcesToLoad, ->
 		controller.game.setup()
 		controller.game.step()
 		controller.game.step()
 		controller.game.step()
 
-	setTimeout afterLoadResources, 1000
+	controller = new RiskGameController $('#risk')
+	controller.lands.fetch url: 'lands.json', success: afterLoadResources
+
+	controller.players.add
+		name: 'msbrogli'
+	controller.players.add
+		name: 'patty'
 
 
 $(document).ready init
