@@ -51,17 +51,15 @@ class RiskGameView extends Backbone.View
 
 class RiskGameController
 	constructor: (el) ->
-		lands = new LandCollection
-		model = new RiskGame 'lands': lands
-		view = new RiskGameView 'el': el, 'model': model
-		view.render()
-
-		lands.fetch url: 'lands.json'
-		$.lands = lands
+		@lands = new LandCollection
+		@game = new RiskGame 'lands': @lands
+		@view = new RiskGameView 'el': el, 'model': @game
+		@view.render()
 
 
 init = ->
 	controller = new RiskGameController $('#risk')
+	controller.lands.fetch url: 'lands.json'
 
 
 $(document).ready init
